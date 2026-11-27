@@ -1,1210 +1,1467 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#14233b">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#173c32">
 <title>CAT CPNS - Simulasi Ujian</title>
 
 <style>
-:root{
-  --navy:#14233b;--blue:#2563eb;--bg:#f3f6fb;
-  --white:#fff;--text:#172033;--muted:#64748b;
-  --border:#e2e8f0;--green:#16a34a;--red:#dc2626;
-  --orange:#d97706
+:root {
+  --green: #173c32;
+  --green2: #245b49;
+  --green-light: #e8f3ed;
+  --blue: #2563eb;
+  --red: #dc2626;
+  --orange: #d97706;
+  --bg: #f3f6f5;
+  --white: #ffffff;
+  --text: #1f2937;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --shadow: 0 4px 18px rgba(0,0,0,.06);
 }
-*{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
-button,select{font:inherit}
-button{cursor:pointer;touch-action:manipulation}
-.hidden{display:none!important}
 
-header{
-  background:var(--navy);color:white;padding:16px 5%;
-  display:flex;justify-content:space-between;align-items:center;gap:12px
+* {
+  box-sizing: border-box;
 }
-.logo{font-size:21px;font-weight:800;letter-spacing:1px}
-.logo small{display:block;font-size:10px;color:#b9c8dd;font-weight:normal;letter-spacing:2px;margin-top:4px}
-.header-status{font-size:12px;color:#86efac}
-.container{max-width:1150px;margin:30px auto;padding:0 18px}
-.hero{background:linear-gradient(120deg,#14233b,#234b80);color:white;border-radius:18px;padding:35px;margin-bottom:25px}
-.hero h1{font-size:30px;margin:0 0 10px}
-.hero p{color:#dbeafe;line-height:1.6;margin:0}
-.section-title{font-size:20px;margin:25px 0 15px}
-.category-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
-.category{
-  background:white;border:2px solid var(--border);border-radius:14px;
-  padding:20px;text-align:left;transition:.2s;min-height:140px
-}
-.category:hover,.category.active{border-color:var(--blue);background:#eff6ff;transform:translateY(-2px)}
-.category h2{margin:0 0 9px;font-size:23px}
-.category p{margin:0;color:var(--muted);font-size:12px;line-height:1.5}
-.category .count{font-size:11px;color:var(--blue);margin-top:15px}
-.panel{background:white;border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:18px}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.field label{display:block;font-weight:bold;font-size:13px;margin-bottom:9px}
-.field select{width:100%;padding:13px;border:1px solid var(--border);border-radius:9px;background:white;min-height:46px}
-.btn{border:0;border-radius:9px;padding:13px 20px;font-weight:bold;transition:.2s;min-height:44px}
-.btn-primary{background:var(--blue);color:white}
-.btn-primary:hover{background:#1d4ed8}
-.btn-secondary{background:#e8eef7;color:var(--navy)}
-.btn-danger{background:#fee2e2;color:#991b1b}
-.btn-success{background:var(--green);color:white}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.full{width:100%;margin-top:18px}
-.note{font-size:12px;color:var(--muted);line-height:1.6}
-.loading{text-align:center;padding:40px}
-.spinner{width:35px;height:35px;border:4px solid #dbeafe;border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 15px}
-@keyframes spin{to{transform:rotate(360deg)}}
 
-.exam-header{
-  background:var(--navy);color:white;padding:15px 5%;
-  display:flex;justify-content:space-between;align-items:center;
-  gap:15px;position:sticky;top:0;z-index:10
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
 }
-.exam-header h3{margin:0;font-size:16px}
-.timer{background:#253c5e;padding:10px 17px;border-radius:9px;font-weight:bold;font-size:20px;font-variant-numeric:tabular-nums;white-space:nowrap}
-.timer.warning{background:#991b1b}
-.exam-layout{max-width:1250px;margin:22px auto;padding:0 15px;display:grid;grid-template-columns:minmax(0,1fr) 285px;gap:18px}
-.question-card,.nav-card{background:white;border:1px solid var(--border);border-radius:13px;padding:23px}
-.question-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:20px}
-.tag{background:#eff6ff;color:var(--blue);padding:6px 10px;border-radius:20px;font-size:12px;font-weight:bold}
-.question-text{font-size:17px;line-height:1.8;font-weight:600;white-space:pre-wrap;margin-bottom:22px}
-.option{display:flex;align-items:flex-start;gap:12px;border:1px solid var(--border);border-radius:10px;padding:14px;margin:10px 0;cursor:pointer;line-height:1.6;transition:.15s;-webkit-tap-highlight-color:transparent}
-.option:hover{background:#f8fafc;border-color:#93c5fd}
-.option.selected{background:#eff6ff;border-color:var(--blue)}
-.option input{margin-top:4px;accent-color:var(--blue)}
-.option-letter{width:27px;height:27px;border-radius:50%;background:#eaf0f8;display:grid;place-items:center;font-weight:bold;flex-shrink:0;font-size:12px}
-.option.selected .option-letter{background:var(--blue);color:white}
-.exam-actions{display:flex;justify-content:space-between;gap:10px;margin-top:25px;flex-wrap:wrap}
-.nav-card h3{margin-top:0}
-.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-bottom:15px}
-.dot{width:10px;height:10px;display:inline-block;border-radius:3px;margin-right:4px}
-.dot.answered{background:var(--blue)}
-.dot.flagged{background:var(--orange)}
-.dot.empty{background:#e2e8f0}
-.number-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
-.number-btn{border:1px solid var(--border);border-radius:7px;padding:10px 2px;background:#f8fafc;font-size:12px;min-height:38px}
-.number-btn.answered{background:var(--blue);color:white;border-color:var(--blue)}
-.number-btn.flagged{background:#fff7ed;color:#c2410c;border-color:var(--orange)}
-.number-btn.current{outline:3px solid #93c5fd}
-.progress{height:8px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:13px 0 18px}
-.progress div{height:100%;background:var(--blue);width:0}
-.result-score{background:linear-gradient(120deg,#14233b,#234b80);color:white;text-align:center;border-radius:15px;padding:30px}
-.result-score .big{font-size:48px;font-weight:800;margin:10px 0}
-.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
-.result-item{background:white;border:1px solid var(--border);border-radius:12px;padding:18px;text-align:center}
-.result-item strong{display:block;font-size:25px;margin:8px 0}
-.review-row{padding:14px;border:1px solid var(--border);border-radius:10px;margin:10px 0;line-height:1.7}
-.correct{color:var(--green);font-weight:bold}
-.incorrect{color:var(--red);font-weight:bold}
-.feedback{padding:13px;border-radius:9px;margin-top:15px;font-size:13px;line-height:1.6}
-.feedback.good{background:#dcfce7;color:#166534}
-.feedback.bad{background:#fee2e2;color:#991b1b}
 
-/* Tampilan penjelasan */
-.explanation-box{
-  display:block;margin-top:13px;padding:13px;
-  background:#fff7ed;border-left:4px solid #d97706;
-  border-radius:7px;color:#78350f;font-size:13px;
-  line-height:1.7;white-space:pre-wrap
+button, input, select {
+  font: inherit;
 }
-.explanation-title{
-  display:block;font-weight:bold;margin-bottom:5px;color:#92400e
-}
-.explanation-text{display:block;white-space:pre-wrap}
 
-footer{text-align:center;color:var(--muted);font-size:12px;padding:25px}
-
-@media(max-width:800px){
-  .category-grid{grid-template-columns:repeat(2,1fr)}
-  .exam-layout{grid-template-columns:1fr}
-  .form-grid{grid-template-columns:1fr}
-  .nav-card{order:-1}
-  .number-grid{grid-template-columns:repeat(10,1fr)}
+button {
+  cursor: pointer;
 }
-@media(max-width:480px){
-  header{padding:13px 15px}
-  .logo{font-size:18px}
-  .header-status{font-size:10px}
-  .container{margin:18px auto;padding:0 12px}
-  .hero{padding:23px;border-radius:13px}
-  .hero h1{font-size:24px}
-  .hero p{font-size:13px}
-  .category-grid{gap:9px}
-  .category{padding:14px;min-height:125px}
-  .category h2{font-size:20px}
-  .panel{padding:16px}
-  .question-card,.nav-card{padding:15px}
-  .question-text{font-size:15px}
-  .number-grid{grid-template-columns:repeat(6,1fr)}
-  .result-grid{grid-template-columns:1fr}
-  .exam-header{padding:12px 14px}
-  .timer{font-size:17px;padding:9px 12px}
-  .exam-actions{display:grid;grid-template-columns:1fr 1fr}
-  .exam-actions button{width:100%}
-  .exam-actions #flagBtn{grid-column:1/-1}
+
+header {
+  background: var(--green);
+  color: white;
+  padding: 20px 16px;
+}
+
+.header-inner {
+  max-width: 1000px;
+  margin: auto;
+}
+
+header h1 {
+  font-size: 22px;
+  margin: 0 0 6px;
+}
+
+header p {
+  margin: 0;
+  opacity: .85;
+  font-size: 12px;
+}
+
+.container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 22px auto;
+  padding: 0 14px 40px;
+}
+
+.panel {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.panel h2,
+.panel h3 {
+  margin-top: 0;
+}
+
+.note {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.field label {
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: white;
+  outline: none;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: var(--green2);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 9px;
+  padding: 12px 17px;
+  font-weight: bold;
+  background: var(--green);
+  color: white;
+}
+
+.btn:hover {
+  opacity: .92;
+}
+
+.btn:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: #e2e8f0;
+  color: var(--text);
+}
+
+.btn-blue {
+  background: var(--blue);
+}
+
+.btn-red {
+  background: var(--red);
+}
+
+.btn-orange {
+  background: var(--orange);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.category-card {
+  padding: 15px 8px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: white;
+  text-align: center;
+  font-weight: bold;
+  color: var(--text);
+}
+
+.category-card.active {
+  border: 2px solid var(--green);
+  background: var(--green-light);
+  color: var(--green);
+}
+
+.exam-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.timer {
+  background: #fff7ed;
+  color: #c2410c;
+  border-radius: 8px;
+  padding: 9px 13px;
+  font-weight: bold;
+}
+
+.progress {
+  width: 100%;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0;
+  background: var(--green2);
+  transition: width .2s;
+}
+
+.question-number {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.question-text {
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 1.65;
+  margin-bottom: 18px;
+  white-space: pre-wrap;
+}
+
+.option {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 13px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin: 9px 0;
+  cursor: pointer;
+  line-height: 1.5;
+}
+
+.option:hover {
+  background: #f8fafc;
+}
+
+.option.selected {
+  border: 2px solid var(--green2);
+  background: var(--green-light);
+}
+
+.option input {
+  margin-top: 3px;
+}
+
+.question-nav {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 18px;
+}
+
+.question-nav button {
+  padding: 9px 4px;
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: 7px;
+  font-weight: bold;
+}
+
+.question-nav button.answered {
+  background: var(--green-light);
+  border-color: var(--green2);
+  color: var(--green);
+}
+
+.question-nav button.current {
+  background: var(--green);
+  border-color: var(--green);
+  color: white;
+}
+
+.exam-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.result-score {
+  font-size: 34px;
+  font-weight: bold;
+  color: var(--green);
+  margin: 10px 0;
+}
+
+.feedback {
+  padding: 12px;
+  border-radius: 9px;
+  margin: 10px 0;
+  line-height: 1.6;
+}
+
+.feedback.good {
+  background: #ecfdf5;
+  color: #166534;
+}
+
+.feedback.bad {
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.review-row {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin: 10px 0;
+  line-height: 1.7;
+  background: white;
+}
+
+.review-row .correct {
+  color: #15803d;
+  font-weight: bold;
+}
+
+.review-row .incorrect {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.explanation-box {
+  margin-top: 12px;
+  padding: 13px;
+  border-left: 4px solid var(--orange);
+  background: #fffbeb;
+  border-radius: 7px;
+  line-height: 1.7;
+}
+
+.explanation-title {
+  color: #92400e;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.review-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 12px 0 16px;
+}
+
+.review-filter {
+  border: 1px solid var(--border);
+  background: #f8fafc;
+  color: var(--text);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.review-filter.active {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: white;
+}
+
+.review-section-title {
+  margin: 22px 0 8px;
+  font-size: 15px;
+}
+
+.status-box {
+  padding: 12px;
+  border-radius: 9px;
+  margin-bottom: 12px;
+  background: #f1f5f9;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+  padding: 20px 10px;
+}
+
+@media(max-width:600px) {
+  header h1 {
+    font-size: 19px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .category-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .question-nav {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .panel {
+    padding: 14px;
+  }
+
+  .question-text {
+    font-size: 15px;
+  }
+
+  .exam-actions {
+    flex-wrap: wrap;
+  }
+
+  .exam-actions .btn {
+    flex: 1;
+  }
+
+  .review-filter {
+    flex: 1 1 auto;
+  }
 }
 </style>
 </head>
 
 <body>
+
 <header>
-  <div class="logo">CAT CPNS<small>COMPUTER ASSISTED TEST</small></div>
-  <div class="header-status" id="connectionStatus">● MEMERIKSA API...</div>
+  <div class="header-inner">
+    <h1>CAT CPNS</h1>
+    <p>Computer Assisted Test • TWK • TIU • TKP</p>
+  </div>
 </header>
 
-<main id="home" class="container">
-  <section class="hero">
-    <h1>SIMULASI UJIAN CPNS</h1>
-    <p>Latih kemampuan TWK, TIU, dan TKP menggunakan bank soal pribadi yang terhubung dengan Google Sheets. Kerjakan soal dan evaluasi hasil latihanmu.</p>
-  </section>
+<main class="container">
 
-  <h2 class="section-title">Pilih Materi Ujian</h2>
-  <div class="category-grid">
-    <button class="category active" data-category="TWK">
-      <h2 style="color:#2563eb">TWK</h2>
-      <p>Tes Wawasan Kebangsaan</p>
-      <div class="count" id="countTWK">Memuat soal...</div>
-    </button>
+  <!-- MENU UTAMA -->
+  <section id="homeScreen">
 
-    <button class="category" data-category="TIU">
-      <h2 style="color:#16a34a">TIU</h2>
-      <p>Tes Intelegensia Umum</p>
-      <div class="count" id="countTIU">Memuat soal...</div>
-    </button>
+    <div class="panel">
+      <h2>Simulasi Tes CPNS</h2>
+      <p class="note">
+        Latihan dan simulasi ujian CPNS dengan sistem penilaian otomatis.
+        Kerjakan soal, periksa hasil, dan pelajari pembahasan jawaban yang salah.
+      </p>
 
-    <button class="category" data-category="TKP">
-      <h2 style="color:#d97706">TKP</h2>
-      <p>Tes Karakteristik Pribadi</p>
-      <div class="count" id="countTKP">Memuat soal...</div>
-    </button>
-
-    <button class="category" data-category="ALL">
-      <h2 style="color:#7c3aed">GABUNGAN</h2>
-      <p>TWK + TIU + TKP</p>
-      <div class="count" id="countALL">Memuat soal...</div>
-    </button>
-  </div>
-
-  <h2 class="section-title">Pengaturan Ujian</h2>
-  <section class="panel">
-    <div class="form-grid">
-      <div class="field">
-        <label>Mode pengerjaan</label>
-        <select id="mode">
-          <option value="simulation">Simulasi CAT (dengan timer)</option>
-          <option value="practice">Mode belajar (tanpa timer)</option>
-        </select>
+      <div class="category-grid">
+        <button class="category-card active" data-category="TWK">TWK</button>
+        <button class="category-card" data-category="TIU">TIU</button>
+        <button class="category-card" data-category="TKP">TKP</button>
+        <button class="category-card" data-category="GABUNGAN">GABUNGAN</button>
       </div>
 
-      <div class="field">
-        <label>Jumlah soal</label>
-        <select id="questionCount">
-          <option value="10">10 Soal</option>
-          <option value="20">20 Soal</option>
-          <option value="30">30 Soal</option>
-          <option value="50">50 Soal</option>
-          <option value="110" selected>Semua soal (maksimal 110)</option>
-        </select>
+      <div class="grid">
+        <div class="field">
+          <label for="examMode">Mode pengerjaan</label>
+          <select id="examMode">
+            <option value="simulation">Simulasi ujian</option>
+            <option value="practice">Mode latihan</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="questionCount">Jumlah soal</label>
+          <select id="questionCount">
+            <option value="20">20 soal</option>
+            <option value="30">30 soal</option>
+            <option value="50">50 soal</option>
+            <option value="100">100 soal</option>
+          </select>
+        </div>
       </div>
 
-      <div class="field">
-        <label>Waktu ujian</label>
-        <select id="duration">
-          <option value="auto">Otomatis sesuai jumlah soal</option>
-          <option value="30">30 Menit</option>
-          <option value="60">60 Menit</option>
-          <option value="100">100 Menit</option>
-          <option value="120">120 Menit</option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label>Urutan soal</label>
-        <select id="order">
-          <option value="random">Acak soal</option>
-          <option value="normal">Urut sesuai bank soal</option>
-        </select>
-      </div>
+      <div style="height:15px"></div>
+      <button class="btn btn-block" id="startButton">
+        MULAI UJIAN
+      </button>
     </div>
 
-    <p class="note">Simulasi gabungan memiliki 30 TWK, 35 TIU, dan 45 TKP jika seluruh soal tersedia. Timer otomatis menggunakan 100 menit untuk 110 soal.</p>
-    <button class="btn btn-primary full" id="startBtn">MULAI UJIAN</button>
+    <div class="panel">
+      <h3>Informasi Ujian</h3>
+      <div class="status-box" id="connectionStatus">
+        Menunggu pemeriksaan koneksi database...
+      </div>
+      <p class="note">
+        Pastikan koneksi Google Sheets tersedia sebelum memulai ujian.
+      </p>
+    </div>
+
   </section>
 
-  <div id="homeError" class="feedback bad hidden"></div>
-</main>
+  <!-- LAYAR UJIAN -->
+  <section id="examScreen" class="hidden">
 
-<div id="loading" class="container hidden">
-  <div class="panel loading">
-    <div class="spinner"></div>
-    <strong id="loadingText">Mengambil soal dari Google Sheets...</strong>
-    <p class="note">Mohon tunggu sebentar.</p>
-  </div>
-</div>
-
-<section id="exam" class="hidden">
-  <div class="exam-header">
-    <div>
-      <h3>UJIAN CAT CPNS</h3>
-      <small id="examCategory">TWK</small>
-    </div>
-    <div class="timer" id="timer">100:00</div>
-  </div>
-
-  <div class="exam-layout">
-    <div class="question-card">
-      <div class="question-meta">
-        <span class="tag" id="questionCategory">TWK</span>
-        <span id="questionPosition" class="note">Soal 1</span>
+    <div class="panel">
+      <div class="exam-top">
+        <strong id="examCategory">TWK</strong>
+        <div class="timer" id="timer">00:00</div>
       </div>
 
-      <div class="progress"><div id="progressBar"></div></div>
+      <div class="progress">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <div id="progressText" class="note">Soal 1 dari 20</div>
+    </div>
+
+    <div class="panel">
+      <div class="question-number" id="questionNumber">SOAL NOMOR 1</div>
       <div class="question-text" id="questionText"></div>
-      <div id="options"></div>
-      <div id="practiceFeedback" class="hidden"></div>
+      <div id="optionsContainer"></div>
 
       <div class="exam-actions">
-        <button class="btn btn-secondary" id="prevBtn">← Sebelumnya</button>
-        <button class="btn btn-secondary" id="flagBtn">⚑ Ragu-ragu</button>
-        <button class="btn btn-primary" id="nextBtn">Selanjutnya →</button>
+        <button class="btn btn-secondary" id="previousButton">
+          SEBELUMNYA
+        </button>
+        <button class="btn" id="nextButton">
+          BERIKUTNYA
+        </button>
       </div>
 
-      <button id="checkBtn" class="btn btn-success full hidden">PERIKSA JAWABAN</button>
+      <div id="practiceFeedback"></div>
     </div>
 
-    <aside class="nav-card">
+    <div class="panel">
       <h3>Navigasi Soal</h3>
-      <div class="legend">
-        <span><i class="dot answered"></i> Dijawab</span>
-        <span><i class="dot flagged"></i> Ragu</span>
-        <span><i class="dot empty"></i> Kosong</span>
-      </div>
-      <div id="answeredText" class="note">0 dari 0 dijawab</div>
-      <div class="number-grid" id="numberGrid"></div>
-      <button class="btn btn-danger full" id="finishBtn">SELESAI UJIAN</button>
-    </aside>
-  </div>
-</section>
-
-<section id="result" class="container hidden">
-  <div class="result-score">
-    <div>HASIL UJIAN CAT CPNS</div>
-    <div class="big" id="finalScore">0</div>
-    <div id="resultDescription">Nilai akhir</div>
-  </div>
-
-  <div class="result-grid">
-    <div class="result-item">
-      <span class="note">Jumlah soal</span>
-      <strong id="totalResult">0</strong>
+      <div id="questionNavigation" class="question-nav"></div>
+      <div style="height:15px"></div>
+      <button class="btn btn-red btn-block" id="finishButton">
+        SELESAI DAN LIHAT HASIL
+      </button>
     </div>
-    <div class="result-item">
-      <span class="note">Dijawab</span>
-      <strong id="answeredResult">0</strong>
-    </div>
-    <div class="result-item">
-      <span class="note">Tidak dijawab</span>
-      <strong id="emptyResult">0</strong>
-    </div>
-  </div>
 
-  <h2 class="section-title">Rincian Nilai</h2>
-  <div id="categoryResults" class="result-grid"></div>
-
-  <section class="panel">
-    <h3>Evaluasi Jawaban</h3>
-    <div id="reviewList"></div>
   </section>
 
-  <button class="btn btn-primary full" id="retryBtn">KEMBALI KE HALAMAN UTAMA</button>
-</section>
+  <!-- HALAMAN HASIL -->
+  <section id="resultScreen" class="hidden">
 
-<footer>CAT CPNS • SISTEM LATIHAN UJIAN • DATA DARI GOOGLE SHEETS</footer>
+    <div class="panel">
+      <h2>Hasil Ujian</h2>
+      <div id="resultSummary"></div>
+      <button class="btn btn-block" id="backHomeButton">
+        KEMBALI KE MENU UTAMA
+      </button>
+    </div>
+
+    <div class="panel">
+      <h3>Evaluasi Jawaban</h3>
+      <p class="note">
+        Pilih kategori untuk melihat jawaban. Penjelasan hanya ditampilkan
+        pada jawaban yang salah atau skor TKP yang belum maksimal.
+      </p>
+
+      <div class="review-filters" id="reviewFilters">
+        <button type="button" class="review-filter active"
+          data-review-filter="all">
+          Semua Jawaban
+        </button>
+
+        <button type="button" class="review-filter"
+          data-review-filter="wrong">
+          Jawaban Salah
+        </button>
+
+        <button type="button" class="review-filter"
+          data-review-filter="correct">
+          Jawaban Benar
+        </button>
+      </div>
+
+      <h4 class="review-section-title" id="reviewSectionTitle">
+        SEMUA JAWABAN
+      </h4>
+
+      <div id="reviewList"></div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  CAT CPNS • Sistem Latihan dan Simulasi Ujian
+</footer>
 
 <script>
-"use strict";
-
 /* =========================================================
-   KONFIGURASI API
+   CAT CPNS - TAHAP 2
+   KONEKSI GOOGLE SHEETS DAN SISTEM PENGERJAAN SOAL
 ========================================================= */
 
+// URL GOOGLE APPS SCRIPT
 const API_URL = "https://script.google.com/macros/s/AKfycbzrcz_oG4yxJR-QIH_DhIZa7FTkhatKhXptaERh93nDdxdxtgSHttOk_WTjeM0dYjwx/exec";
 
-const API_TIMEOUT = 45000;
-const API_MAX_ATTEMPTS = 3;
+// KONFIGURASI
+const CONFIG = {
+  defaultDuration: 60,
+  practiceDuration: 0
+};
 
+// STATE APLIKASI
 let selectedCategory = "TWK";
+let examMode = "simulation";
 let questions = [];
+let currentQuestion = 0;
 let answers = {};
-let flagged = {};
-let checkedPractice = {};
-let currentIndex = 0;
-let timeLeft = 0;
+let examStartTime = null;
 let timerInterval = null;
-let currentMode = "simulation";
-let submitted = false;
-let gradeData = null;
-let jsonpCounter = 0;
+let remainingSeconds = 0;
+let reviewDetails = [];
+let activeReviewFilter = "all";
+let examFinished = false;
 
-const letters = ["A","B","C","D","E"];
+// ELEMEN HTML
 const $ = id => document.getElementById(id);
 
+// =========================================================
+// UTILITAS
+// =========================================================
 
-/* =========================================================
-   UTILITAS
-========================================================= */
-
-function setConnectionStatus(text, color) {
-  const el = $("connectionStatus");
-  el.textContent = text;
-  el.style.color = color;
-}
-
-function showHomeError(message) {
-  $("homeError").textContent = message;
-  $("homeError").classList.remove("hidden");
-}
-
-function hideHomeError() {
-  $("homeError").classList.add("hidden");
-}
-
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
-
-
-/* =========================================================
-   FUNGSI MENAMPILKAN PENJELASAN
-========================================================= */
-
-function appendExplanation(container, explanation) {
-  const text = String(explanation || "").trim();
-
-  // Tidak membuat kotak jika penjelasan kosong.
-  if (!text) return;
-
-  const box = document.createElement("div");
-  box.className = "explanation-box";
-
-  const title = document.createElement("span");
-  title.className = "explanation-title";
-  title.textContent = "MENGAPA JAWABAN INI SALAH?";
-
-  const content = document.createElement("span");
-  content.className = "explanation-text";
-  content.textContent = text;
-
-  box.append(title, content);
-  container.appendChild(box);
-}
-
-
-/* =========================================================
-   JSONP API - DITINGKATKAN UNTUK HP DAN LAPTOP
-========================================================= */
-
-function apiRequest(params, maxAttempts = API_MAX_ATTEMPTS) {
-  return new Promise((resolve, reject) => {
-    let attempt = 0;
-    let lastError = "";
-
-    function requestAttempt() {
-      attempt++;
-
-      const callback =
-        "cpnsCallback_" + Date.now() + "_" + (++jsonpCounter);
-
-      const script = document.createElement("script");
-      script.async = true;
-      script.charset = "UTF-8";
-
-      const query = new URLSearchParams();
-
-      Object.keys(params).forEach(key => {
-        query.set(key, String(params[key]));
-      });
-
-      query.set("callback", callback);
-      query.set("_ts", String(Date.now()));
-
-      let finished = false;
-      let timeoutId = null;
-      let loadCheckId = null;
-
-      function cleanup() {
-        if (timeoutId) clearTimeout(timeoutId);
-        if (loadCheckId) clearTimeout(loadCheckId);
-        if (script.parentNode) script.parentNode.removeChild(script);
-
-        script.onerror = null;
-        script.onload = null;
-
-        try {
-          delete window[callback];
-        } catch (e) {
-          window[callback] = undefined;
-        }
-      }
-
-      function fail(message) {
-        if (finished) return;
-
-        finished = true;
-        lastError = message;
-        cleanup();
-
-        if (attempt < maxAttempts) {
-          setConnectionStatus(
-            "● MENCOBA KONEKSI ULANG " + attempt + "/" + maxAttempts,
-            "#fbbf24"
-          );
-
-          setTimeout(requestAttempt, 1200 * attempt);
-
-        } else {
-          reject(new Error(
-            lastError +
-            " Pastikan deployment Apps Script dapat diakses oleh siapa saja."
-          ));
-        }
-      }
-
-      timeoutId = setTimeout(() => {
-        fail("Koneksi API melewati batas waktu 45 detik.");
-      }, API_TIMEOUT);
-
-      window[callback] = function(data) {
-        if (finished) return;
-
-        finished = true;
-        cleanup();
-
-        if (!data || typeof data !== "object") {
-          reject(new Error("Respons API tidak valid."));
-          return;
-        }
-
-        resolve(data);
-      };
-
-      script.onerror = function() {
-        fail("Browser gagal memuat Google Apps Script.");
-      };
-
-      script.onload = function() {
-        loadCheckId = setTimeout(() => {
-          if (!finished) {
-            fail("API termuat tetapi tidak mengirim callback JSONP.");
-          }
-        }, 2500);
-      };
-
-      script.src = API_URL + "?" + query.toString();
-      document.head.appendChild(script);
-    }
-
-    requestAttempt();
+function showScreen(screenId) {
+  ["homeScreen", "examScreen", "resultScreen"].forEach(id => {
+    $(id).classList.toggle("hidden", id !== screenId);
   });
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+function setConnectionStatus(message, isError = false) {
+  const el = $("connectionStatus");
+  if (!el) return;
 
-/* =========================================================
-   MEMUAT STATUS DATABASE
-========================================================= */
+  el.textContent = message;
+  el.style.background = isError ? "#fef2f2" : "#ecfdf5";
+  el.style.color = isError ? "#991b1b" : "#166534";
+}
 
-async function loadStatus() {
-  setConnectionStatus("● MEMERIKSA API...", "#fbbf24");
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[char]);
+}
+
+function normalizeText(value) {
+  return String(value ?? "").trim();
+}
+
+// =========================================================
+// KONEKSI API GOOGLE APPS SCRIPT
+// =========================================================
+
+async function apiRequest(action, params = {}) {
+  const url = new URL(API_URL);
+
+  url.searchParams.set("action", action);
+  url.searchParams.set("_", Date.now());
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      url.searchParams.set(key, String(value));
+    }
+  });
+
+  const response = await fetch(url.toString(), {
+    method: "GET",
+    cache: "no-store",
+    redirect: "follow"
+  });
+
+  if (!response.ok) {
+    throw new Error("Server memberikan respons HTTP " + response.status);
+  }
+
+  const text = await response.text();
+
+  let data;
 
   try {
-    const data = await apiRequest({ action: "status" });
+    data = JSON.parse(text);
+  } catch (error) {
+    throw new Error(
+      "Respons API bukan JSON. Periksa deployment Google Apps Script."
+    );
+  }
 
-    if (!data.success) {
-      throw new Error(data.message || "Status database gagal dibaca.");
-    }
+  if (data.success === false || data.error) {
+    throw new Error(data.message || data.error || "API gagal memproses permintaan.");
+  }
 
-    const database = data.database || {};
+  return data;
+}
 
-    ["TWK","TIU","TKP"].forEach(cat => {
-      const total = Number(database[cat]?.total || 0);
-      $("count" + cat).textContent = total + " soal tersedia";
-    });
+// =========================================================
+// CEK KONEKSI
+// =========================================================
 
-    const totalAll =
-      Number(database.TWK?.total || 0) +
-      Number(database.TIU?.total || 0) +
-      Number(database.TKP?.total || 0);
+async function checkConnection() {
+  try {
+    setConnectionStatus("Menghubungkan ke Google Sheets...");
 
-    $("countALL").textContent = totalAll + " soal tersedia";
+    const data = await apiRequest("status");
 
-    setConnectionStatus("● API TERHUBUNG", "#86efac");
-    hideHomeError();
-
-    return database;
-
-  } catch (err) {
-    ["TWK","TIU","TKP","ALL"].forEach(cat => {
-      $("count" + cat).textContent = "API belum terhubung";
-    });
-
-    setConnectionStatus("● API TERPUTUS", "#fca5a5");
-
-    showHomeError(
-      "Gagal mengambil data Google Sheets: " + err.message
+    setConnectionStatus(
+      data.message || "Koneksi Google Sheets berhasil."
     );
 
-    return null;
+    return true;
+
+  } catch (error) {
+    console.error("Koneksi API:", error);
+
+    setConnectionStatus(
+      "Koneksi gagal: " + error.message,
+      true
+    );
+
+    return false;
   }
 }
 
+// =========================================================
+// AMBIL SOAL
+// =========================================================
 
-/* =========================================================
-   PILIH KATEGORI
-========================================================= */
+async function fetchQuestions(category, limit) {
+  const data = await apiRequest("questions", {
+    category: category,
+    limit: limit
+  });
 
-document.querySelectorAll(".category").forEach(button => {
+  let list = data.questions || data.data || [];
+
+  if (!Array.isArray(list)) {
+    throw new Error("Format data soal dari server tidak valid.");
+  }
+
+  return list.map((q, index) => ({
+    id: q.id ?? index + 1,
+    number: q.number ?? index + 1,
+    question: normalizeText(q.question || q.soal || q.text),
+    options: normalizeOptions(q.options || q.pilihan || q.choices),
+    explanation: normalizeText(
+      q.explanation || q.pembahasan || ""
+    ),
+    category: q.category || category
+  })).filter(q => q.question);
+}
+
+// =========================================================
+// NORMALISASI PILIHAN JAWABAN
+// =========================================================
+
+function normalizeOptions(options) {
+  if (Array.isArray(options)) {
+    return options.map((item, index) => {
+      if (typeof item === "string") {
+        return {
+          key: String.fromCharCode(65 + index),
+          text: item.replace(/^[A-E][.)]\s*/i, "")
+        };
+      }
+
+      return {
+        key: item.key || item.label || String.fromCharCode(65 + index),
+        text: item.text || item.value || item.option || ""
+      };
+    });
+  }
+
+  if (options && typeof options === "object") {
+    return Object.entries(options).map(([key, value]) => ({
+      key,
+      text: typeof value === "string" ? value : value.text || ""
+    }));
+  }
+
+  return [];
+}
+
+// =========================================================
+// PILIH KATEGORI
+// =========================================================
+
+document.querySelectorAll(".category-card").forEach(button => {
   button.addEventListener("click", () => {
-    document.querySelectorAll(".category").forEach(b => {
-      b.classList.remove("active");
+    document.querySelectorAll(".category-card").forEach(item => {
+      item.classList.remove("active");
     });
 
     button.classList.add("active");
     selectedCategory = button.dataset.category;
-    hideHomeError();
   });
 });
 
+// =========================================================
+// MULAI UJIAN
+// =========================================================
 
-/* =========================================================
-   MULAI UJIAN
-========================================================= */
-
-$("startBtn").addEventListener("click", startExam);
+$("startButton").addEventListener("click", startExam);
 
 async function startExam() {
-  hideHomeError();
-
-  $("startBtn").disabled = true;
-  $("home").classList.add("hidden");
-  $("loading").classList.remove("hidden");
-
-  $("loadingText").textContent =
-    "Mengambil seluruh data soal dari Google Sheets...";
-
-  currentMode = $("mode").value;
-  submitted = false;
-  gradeData = null;
+  const button = $("startButton");
 
   try {
-    const requestedCount = Number($("questionCount").value);
+    button.disabled = true;
+    button.textContent = "MEMUAT SOAL...";
 
-    /*
-      Ambil seluruh soal terlebih dahulu.
-      Penjelasan ikut dikirim dari Code.gs.
-    */
+    examMode = $("examMode").value;
 
-    const data = await apiRequest({
-      action: "questions",
-      category: selectedCategory,
-      count: 0
-    });
+    const limit = Number($("questionCount").value);
 
-    if (!data.success) {
-      throw new Error(data.message || "Gagal mengambil soal.");
+    setConnectionStatus("Sedang mengambil soal dari Google Sheets...");
+
+    questions = await fetchQuestions(selectedCategory, limit);
+
+    if (!questions.length) {
+      throw new Error("Soal tidak ditemukan. Periksa sheet database.");
     }
 
-    if (!Array.isArray(data.questions) || data.questions.length === 0) {
-      throw new Error(
-        "Tidak ada soal valid. Periksa format soal dan kunci di Google Sheets."
-      );
-    }
-
-    let allQuestions = data.questions.slice();
-
-    const categoryOrder = { TWK: 1, TIU: 2, TKP: 3 };
-
-    if ($("order").value === "normal") {
-      allQuestions.sort((a, b) => {
-        if (a.category !== b.category) {
-          return categoryOrder[a.category] - categoryOrder[b.category];
-        }
-
-        return Number(a.number) - Number(b.number);
-      });
-
-    } else {
-      shuffleArray(allQuestions);
-    }
-
-    questions = allQuestions.slice(0, requestedCount);
-
-    if (questions.length === 0) {
-      throw new Error("Jumlah soal yang diterima kosong.");
-    }
-
+    currentQuestion = 0;
     answers = {};
-    flagged = {};
-    checkedPractice = {};
-    currentIndex = 0;
+    reviewDetails = [];
+    examFinished = false;
+    examStartTime = Date.now();
 
-    $("loading").classList.add("hidden");
-    $("exam").classList.remove("hidden");
+    remainingSeconds = CONFIG.defaultDuration * 60;
 
-    const duration = $("duration").value;
-
-    if (currentMode === "practice") {
-      timeLeft = 0;
-      $("timer").textContent = "BELAJAR";
-      $("timer").classList.remove("warning");
-      clearInterval(timerInterval);
-
-    } else {
-      if (duration === "auto") {
-        timeLeft = Math.max(
-          60,
-          Math.ceil(100 * questions.length / 110) * 60
-        );
-      } else {
-        timeLeft = Number(duration) * 60;
-      }
-
-      startTimer();
+    if (examMode === "practice") {
+      remainingSeconds = 0;
     }
 
-    $("checkBtn").classList.toggle(
-      "hidden",
-      currentMode !== "practice"
-    );
+    $("examCategory").textContent = selectedCategory;
 
-    $("finishBtn").textContent =
-      currentMode === "practice"
-        ? "SELESAI LATIHAN"
-        : "SELESAI UJIAN";
-
+    showScreen("examScreen");
     renderQuestion();
-    renderNavigation();
+    renderQuestionNavigation();
 
-  } catch (err) {
-    $("loading").classList.add("hidden");
-    $("home").classList.remove("hidden");
+    if (examMode === "simulation") {
+      startTimer();
+    } else {
+      $("timer").textContent = "MODE LATIHAN";
+    }
 
-    showHomeError("Gagal memulai ujian: " + err.message);
+    setConnectionStatus("Soal berhasil dimuat.");
+
+  } catch (error) {
+    console.error(error);
+    alert("Gagal memulai ujian:\n" + error.message);
 
   } finally {
-    $("startBtn").disabled = false;
+    button.disabled = false;
+    button.textContent = "MULAI UJIAN";
   }
 }
 
+// =========================================================
+// TAMPILKAN SOAL
+// =========================================================
 
-/* =========================================================
-   TIMER
-========================================================= */
+function renderQuestion() {
+  const q = questions[currentQuestion];
+
+  if (!q) return;
+
+  $("questionNumber").textContent =
+    "SOAL NOMOR " + (currentQuestion + 1);
+
+  $("questionText").textContent = q.question;
+
+  const selectedAnswer = answers[currentQuestion] || "";
+
+  $("optionsContainer").innerHTML = q.options.map(option => {
+    const key = option.key;
+
+    return `
+      <label class="option ${selectedAnswer === key ? "selected" : ""}">
+        <input
+          type="radio"
+          name="answer"
+          value="${escapeHTML(key)}"
+          ${selectedAnswer === key ? "checked" : ""}
+        >
+        <span>
+          <strong>${escapeHTML(key)}.</strong>
+          ${escapeHTML(option.text)}
+        </span>
+      </label>
+    `;
+  }).join("");
+
+  $("optionsContainer").querySelectorAll("input").forEach(input => {
+    input.addEventListener("change", () => {
+      answers[currentQuestion] = input.value;
+
+      renderQuestion();
+      renderQuestionNavigation();
+
+      if (examMode === "practice") {
+        showPracticeFeedback();
+      }
+    });
+  });
+
+  $("previousButton").disabled = currentQuestion === 0;
+
+  $("nextButton").textContent =
+    currentQuestion === questions.length - 1
+      ? "LIHAT HASIL"
+      : "BERIKUTNYA";
+
+  const progress = ((currentQuestion + 1) / questions.length) * 100;
+
+  $("progressBar").style.width = progress + "%";
+
+  $("progressText").textContent =
+    `Soal ${currentQuestion + 1} dari ${questions.length}`;
+
+  if (examMode !== "practice") {
+    $("practiceFeedback").innerHTML = "";
+  }
+}
+
+// =========================================================
+// NAVIGASI SOAL
+// =========================================================
+
+function renderQuestionNavigation() {
+  $("questionNavigation").innerHTML = questions.map((q, index) => {
+    const answered = answers[index] ? "answered" : "";
+    const current = index === currentQuestion ? "current" : "";
+
+    return `
+      <button
+        type="button"
+        class="${answered} ${current}"
+        data-index="${index}"
+      >
+        ${index + 1}
+      </button>
+    `;
+  }).join("");
+
+  $("questionNavigation").querySelectorAll("button").forEach(button => {
+    button.addEventListener("click", () => {
+      currentQuestion = Number(button.dataset.index);
+      renderQuestion();
+      renderQuestionNavigation();
+    });
+  });
+}
+
+$("previousButton").addEventListener("click", () => {
+  if (currentQuestion > 0) {
+    currentQuestion--;
+    renderQuestion();
+    renderQuestionNavigation();
+  }
+});
+
+$("nextButton").addEventListener("click", () => {
+  if (currentQuestion < questions.length - 1) {
+    currentQuestion++;
+    renderQuestion();
+    renderQuestionNavigation();
+  } else {
+    finishExam();
+  }
+});
+
+// =========================================================
+// TIMER
+// =========================================================
 
 function startTimer() {
   clearInterval(timerInterval);
-  updateTimer();
+
+  updateTimerDisplay();
 
   timerInterval = setInterval(() => {
-    timeLeft--;
-    updateTimer();
+    remainingSeconds--;
 
-    if (timeLeft <= 0) {
+    updateTimerDisplay();
+
+    if (remainingSeconds <= 0) {
       clearInterval(timerInterval);
-      alert("Waktu ujian habis. Jawaban akan dikoreksi.");
-      finishExam(true);
+      alert("Waktu ujian telah habis.");
+      finishExam();
     }
   }, 1000);
 }
 
-function updateTimer() {
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
+function updateTimerDisplay() {
+  const minutes = Math.floor(remainingSeconds / 60);
+  const seconds = remainingSeconds % 60;
 
   $("timer").textContent =
     String(minutes).padStart(2, "0") + ":" +
     String(seconds).padStart(2, "0");
-
-  $("timer").classList.toggle("warning", timeLeft <= 300);
 }
 
+// =========================================================
+// MODE LATIHAN
+// =========================================================
 
-/* =========================================================
-   TAMPILKAN SOAL
-========================================================= */
+async function showPracticeFeedback() {
+  const selected = answers[currentQuestion];
 
-function renderQuestion() {
-  const q = questions[currentIndex];
-  if (!q) return;
+  if (!selected) return;
 
-  $("questionCategory").textContent = q.category;
+  const q = questions[currentQuestion];
 
-  $("examCategory").textContent =
-    selectedCategory === "ALL"
-      ? "GABUNGAN TWK / TIU / TKP"
-      : q.category;
-
-  $("questionPosition").textContent =
-    "Soal " + (currentIndex + 1) + " dari " + questions.length;
-
-  $("questionText").textContent = q.text;
-
-  $("progressBar").style.width =
-    ((currentIndex + 1) / questions.length * 100) + "%";
-
-  const options = $("options");
-  options.innerHTML = "";
-
-  letters.forEach(letter => {
-    const label = document.createElement("label");
-    label.className = "option";
-
-    if (answers[currentIndex] === letter) {
-      label.classList.add("selected");
-    }
-
-    const radio = document.createElement("input");
-    radio.type = "radio";
-    radio.name = "answer";
-    radio.value = letter;
-    radio.checked = answers[currentIndex] === letter;
-    radio.disabled = submitted;
-
-    const letterBox = document.createElement("span");
-    letterBox.className = "option-letter";
-    letterBox.textContent = letter;
-
-    const text = document.createElement("span");
-    text.textContent = q.choices[letter] || "";
-
-    label.append(radio, letterBox, text);
-
-    label.addEventListener("click", () => {
-      if (submitted) return;
-
-      answers[currentIndex] = letter;
-      checkedPractice[currentIndex] = false;
-
-      renderQuestion();
-      renderNavigation();
-    });
-
-    options.appendChild(label);
-  });
-
-  $("prevBtn").disabled = currentIndex === 0;
-
-  $("nextBtn").textContent =
-    currentIndex === questions.length - 1
-      ? "Soal Terakhir"
-      : "Selanjutnya →";
-
-  $("flagBtn").textContent =
-    flagged[currentIndex]
-      ? "⚑ Batalkan Ragu"
-      : "⚑ Ragu-ragu";
-
-  $("practiceFeedback").classList.add("hidden");
-
-  if (currentMode === "practice" && checkedPractice[currentIndex]) {
-    showPracticeFeedback(checkedPractice[currentIndex]);
-  }
-
-  renderNavigation();
+  $("practiceFeedback").innerHTML = `
+    <div class="status-box">
+      Jawaban sudah dipilih. Penilaian dan pembahasan akan
+      ditampilkan setelah jawaban diperiksa oleh server.
+    </div>
+  `;
 }
 
+// =========================================================
+// SELESAI UJIAN
+// =========================================================
 
-/* =========================================================
-   NAVIGASI NOMOR
-========================================================= */
+$("finishButton").addEventListener("click", () => {
+  const unanswered = questions.filter((q, index) => !answers[index]).length;
 
-function renderNavigation() {
-  const grid = $("numberGrid");
-  grid.innerHTML = "";
-
-  questions.forEach((q, index) => {
-    const btn = document.createElement("button");
-    btn.className = "number-btn";
-    btn.textContent = index + 1;
-
-    if (answers[index]) btn.classList.add("answered");
-    if (flagged[index]) btn.classList.add("flagged");
-    if (index === currentIndex) btn.classList.add("current");
-
-    btn.addEventListener("click", () => {
-      currentIndex = index;
-      renderQuestion();
-    });
-
-    grid.appendChild(btn);
-  });
-
-  const answered = Object.keys(answers).filter(
-    key => answers[key]
-  ).length;
-
-  $("answeredText").textContent =
-    answered + " dari " + questions.length + " dijawab";
-}
-
-$("prevBtn").addEventListener("click", () => {
-  if (currentIndex > 0) {
-    currentIndex--;
-    renderQuestion();
-  }
-});
-
-$("nextBtn").addEventListener("click", () => {
-  if (currentIndex < questions.length - 1) {
-    currentIndex++;
-    renderQuestion();
-  }
-});
-
-$("flagBtn").addEventListener("click", () => {
-  flagged[currentIndex] = !flagged[currentIndex];
-  renderQuestion();
-});
-
-
-/* =========================================================
-   MODE BELAJAR - PERIKSA SATU SOAL
-========================================================= */
-
-$("checkBtn").addEventListener("click", async () => {
-  if (!answers[currentIndex]) {
-    alert("Pilih jawaban terlebih dahulu.");
-    return;
-  }
-
-  const q = questions[currentIndex];
-
-  $("checkBtn").disabled = true;
-  $("checkBtn").textContent = "Memeriksa...";
-
-  try {
-    const data = await apiRequest({
-      action: "grade",
-      category: q.category,
-      answers: JSON.stringify([{
-        category: q.category,
-        number: q.number,
-        answer: answers[currentIndex]
-      }])
-    });
-
-    if (!data.success) {
-      throw new Error(data.message || "Gagal memeriksa jawaban.");
-    }
-
-    if (!data.details || !data.details[0]) {
-      throw new Error("Respons koreksi tidak lengkap.");
-    }
-
-    checkedPractice[currentIndex] = data.details[0];
-    showPracticeFeedback(data.details[0]);
-
-  } catch (err) {
-    alert("Gagal memeriksa: " + err.message);
-
-  } finally {
-    $("checkBtn").disabled = false;
-    $("checkBtn").textContent = "PERIKSA JAWABAN";
-  }
-});
-
-
-/* =========================================================
-   FEEDBACK MODE BELAJAR
-========================================================= */
-
-function showPracticeFeedback(detail) {
-  const box = $("practiceFeedback");
-
-  box.innerHTML = "";
-  box.classList.remove("hidden");
-  box.className = "feedback " + (detail.correct ? "good" : "bad");
-
-  const message = document.createElement("div");
-
-  if (detail.category === "TKP") {
-    message.textContent =
-      "Skor jawaban kamu: " + detail.score +
-      " dari " + detail.maxScore +
-      ". Nilai TKP mengikuti bobot pilihan jawaban.";
-
-  } else {
-    message.textContent = detail.correct
-      ? "BENAR! Jawaban kamu tepat."
-      : "BELUM TEPAT. Jawaban yang benar adalah " +
-        detail.correctAnswer + ".";
-  }
-
-  box.appendChild(message);
-
-  // Penjelasan hanya ditampilkan untuk jawaban salah.
-  if (!detail.correct && detail.explanation) {
-    appendExplanation(box, detail.explanation);
-  }
-}
-
-
-/* =========================================================
-   SELESAI UJIAN
-========================================================= */
-
-$("finishBtn").addEventListener("click", () => {
-  finishExam(false);
-});
-
-async function finishExam(autoFinish) {
-  if (submitted) return;
-
-  const answered = Object.keys(answers).filter(
-    key => answers[key]
-  ).length;
-
-  if (!autoFinish) {
+  if (unanswered > 0) {
     const confirmFinish = confirm(
-      "Selesaikan ujian sekarang?\n\n" +
-      "Soal dijawab: " + answered +
-      " dari " + questions.length
+      `Masih ada ${unanswered} soal yang belum dijawab. Yakin ingin menyelesaikan ujian?`
     );
 
     if (!confirmFinish) return;
   }
 
-  submitted = true;
+  finishExam();
+});
+
+// Fungsi finishExam, penilaian, dan pembahasan dilanjutkan di Tahap 3.
+</script>
+
+<script>
+/* =========================================================
+   CAT CPNS - TAHAP 3
+   PENILAIAN, HASIL, DAN PEMBAHASAN
+========================================================= */
+
+// =========================================================
+// KIRIM JAWABAN KE SERVER
+// =========================================================
+
+async function submitAnswers() {
+  const payload = {
+    category: selectedCategory,
+    answers: questions.map((q, index) => ({
+      number: q.number ?? index + 1,
+      answer: answers[index] || ""
+    }))
+  };
+
+  return await apiRequest("grade", {
+    category: selectedCategory,
+    answers: JSON.stringify(payload.answers)
+  });
+}
+
+// =========================================================
+// SELESAIKAN UJIAN
+// =========================================================
+
+async function finishExam() {
+  if (examFinished) return;
+
+  examFinished = true;
+
   clearInterval(timerInterval);
 
-  $("exam").classList.add("hidden");
-  $("loading").classList.remove("hidden");
-  $("loadingText").textContent = "Menghitung hasil ujian...";
-
-  const payload = questions.map((q, index) => ({
-    category: q.category,
-    number: q.number,
-    answer: answers[index] || ""
-  }));
+  $("finishButton").disabled = true;
+  $("finishButton").textContent = "MEMERIKSA JAWABAN...";
 
   try {
-    const data = await apiRequest({
-      action: "grade",
-      category: selectedCategory,
-      answers: JSON.stringify(payload)
-    });
+    const result = await submitAnswers();
 
-    if (!data.success) {
-      throw new Error(data.message || "Gagal menghitung nilai.");
-    }
+    buildReviewDetails(result);
 
-    if (!Array.isArray(data.details)) {
-      throw new Error("Data hasil koreksi tidak lengkap.");
-    }
+    renderResultSummary(result);
+    activeReviewFilter = "all";
+    updateReviewFilterButtons();
+    renderReviewList();
 
-    gradeData = data;
-    renderResult(data);
+    showScreen("resultScreen");
 
-    $("loading").classList.add("hidden");
-    $("result").classList.remove("hidden");
+  } catch (error) {
+    console.error("Penilaian gagal:", error);
 
-  } catch (err) {
-    $("loading").classList.add("hidden");
-    $("exam").classList.remove("hidden");
-    submitted = false;
+    examFinished = false;
 
-    if (currentMode === "simulation" && timeLeft > 0) {
-      startTimer();
-    }
+    alert(
+      "Gagal memeriksa jawaban:\n" +
+      error.message +
+      "\n\nSilakan coba kembali."
+    );
 
-    alert("Gagal menghitung nilai: " + err.message);
+  } finally {
+    $("finishButton").disabled = false;
+    $("finishButton").textContent = "SELESAI DAN LIHAT HASIL";
   }
 }
 
+// =========================================================
+// NORMALISASI HASIL SERVER
+// =========================================================
 
-/* =========================================================
-   HASIL DAN EVALUASI
-   TWK/TIU: 5 poin jika benar.
-   TKP: skor sesuai bobot di Google Sheets.
-========================================================= */
-
-function renderResult(data) {
-  let totalScore = 0;
-  let maxScore = 0;
-
-  const categorySummary = {
-    TWK: { total: 0, score: 0, max: 0, correct: 0 },
-    TIU: { total: 0, score: 0, max: 0, correct: 0 },
-    TKP: { total: 0, score: 0, max: 0, correct: 0 }
-  };
-
-  data.details.forEach(detail => {
-    const cat = detail.category;
-
-    const score = cat === "TKP"
-      ? Number(detail.score || 0)
-      : Number(detail.score || 0) * 5;
-
-    const max = cat === "TKP"
-      ? Number(detail.maxScore || 0)
-      : Number(detail.maxScore || 0) * 5;
-
-    totalScore += score;
-    maxScore += max;
-
-    const s = categorySummary[cat];
-    if (!s) return;
-
-    s.total++;
-    s.score += score;
-    s.max += max;
-
-    if (detail.correct) s.correct++;
-  });
-
-  const answered = Object.keys(answers).filter(
-    key => answers[key]
-  ).length;
-
-  const empty = questions.length - answered;
-
-  $("finalScore").textContent = totalScore;
-
-  $("resultDescription").textContent =
-    "Nilai maksimal " + maxScore + " • " +
-    (maxScore ? Math.round(totalScore / maxScore * 100) : 0) +
-    "% dari skor maksimal";
-
-  $("totalResult").textContent = questions.length;
-  $("answeredResult").textContent = answered;
-  $("emptyResult").textContent = empty;
-
-  const categoryBox = $("categoryResults");
-  categoryBox.innerHTML = "";
-
-  ["TWK", "TIU", "TKP"].forEach(cat => {
-    const s = categorySummary[cat];
-    if (!s.total) return;
-
-    const card = document.createElement("div");
-    card.className = "result-item";
-
-    const title = document.createElement("span");
-    title.className = "note";
-    title.textContent = cat;
-
-    const score = document.createElement("strong");
-    score.textContent = s.score + " / " + s.max;
-
-    const description = document.createElement("small");
-    description.textContent =
-      s.total + " soal • " + s.correct +
-      " jawaban dengan skor maksimal";
-
-    card.append(title, score, description);
-    categoryBox.appendChild(card);
-  });
-
-  $("reviewList").innerHTML = "";
-
-  data.details.forEach((detail, index) => {
-    const q = questions.find(item =>
-      item.category === detail.category &&
-      Number(item.number) === Number(detail.number)
-    );
-
-    const box = document.createElement("div");
-    box.className = "review-row";
-
-    const heading = document.createElement("strong");
-    heading.textContent =
-      (index + 1) + ". " + detail.category +
-      " - Nomor " + detail.number;
-
-    const text = document.createElement("div");
-    text.textContent = q ? q.text : "";
-
-    const answer = document.createElement("div");
-    answer.textContent =
-      "Jawaban kamu: " + (detail.answer || "Tidak dijawab");
-
-    const score = document.createElement("div");
-    score.textContent = "Skor: " +
-      (detail.category === "TKP"
-        ? detail.score + "/" + detail.maxScore
-        : (detail.score * 5) + "/5");
-
-    const status = document.createElement("div");
-
-    if (detail.category === "TKP") {
-      status.className = detail.correct ? "correct" : "incorrect";
-
-      status.textContent = detail.correct
-        ? "Mendapat skor maksimal untuk soal ini"
-        : "Skor TKP di bawah skor maksimal";
-
-    } else {
-      status.className = detail.correct ? "correct" : "incorrect";
-
-      status.textContent = detail.correct
-        ? "BENAR"
-        : "SALAH • Kunci: " + detail.correctAnswer;
-    }
-
-    box.append(heading, text, answer, score, status);
-
-    /*
-     * PENTING:
-     * Jika benar, tidak membuat elemen penjelasan.
-     * Jika salah, tampilkan penjelasan dari Google Sheets.
-     */
-
-    if (!detail.correct && detail.explanation) {
-      appendExplanation(box, detail.explanation);
-    }
-
-    $("reviewList").appendChild(box);
-  });
-
-  window.scrollTo(0, 0);
+function getResultDetails(result) {
+  if (Array.isArray(result.details)) return result.details;
+  if (Array.isArray(result.results)) return result.results;
+  if (Array.isArray(result.data)) return result.data;
+  return [];
 }
 
+function buildReviewDetails(result) {
+  const details = getResultDetails(result);
 
-/* =========================================================
-   KEMBALI KE MENU UTAMA
-========================================================= */
+  reviewDetails = questions.map((q, index) => {
+    const number = Number(q.number ?? index + 1);
 
-$("retryBtn").addEventListener("click", () => {
+    const detail = details.find(item =>
+      Number(item.number ?? item.questionNumber ?? item.no) === number
+    ) || {};
+
+    const selected = answers[index] || "";
+
+    const correctAnswer =
+      detail.correctAnswer ??
+      detail.answerKey ??
+      detail.key ??
+      "";
+
+    const score = Number(detail.score ?? 0);
+    const maxScore = Number(detail.maxScore ?? 0);
+
+    let isCorrect = detail.correct === true;
+
+    if (selected && correctAnswer && selected === correctAnswer) {
+      isCorrect = true;
+    }
+
+    if (selected && selected !== correctAnswer && correctAnswer) {
+      isCorrect = false;
+    }
+
+    // Untuk TKP, jawaban dengan skor di bawah maksimal dianggap
+    // perlu pembahasan.
+    const needsExplanation = selected
+      ? (selectedCategory === "TKP"
+          ? (maxScore > 0 ? score < maxScore : detail.correct === false)
+          : !isCorrect)
+      : true;
+
+    return {
+      number,
+      question: q.question,
+      options: q.options,
+      selected,
+      correctAnswer,
+      correct: isCorrect,
+      score,
+      maxScore,
+      needsExplanation,
+      explanation: normalizeText(
+        detail.explanation ||
+        detail.pembahasan ||
+        q.explanation ||
+        q.pembahasan ||
+        ""
+      ),
+      category: selectedCategory
+    };
+  });
+}
+
+// =========================================================
+// TAMPILKAN RINGKASAN HASIL
+// =========================================================
+
+function renderResultSummary(result) {
+  const total = questions.length;
+
+  const answered = questions.filter((q, index) =>
+    Boolean(answers[index])
+  ).length;
+
+  const correctCount = reviewDetails.filter(item =>
+    item.correct && item.selected
+  ).length;
+
+  const wrongCount = reviewDetails.filter(item =>
+    item.needsExplanation && item.selected
+  ).length;
+
+  const score = Number(
+    result.totalScore ??
+    result.score ??
+    result.nilai ??
+    0
+  );
+
+  const elapsedSeconds = Math.floor(
+    (Date.now() - examStartTime) / 1000
+  );
+
+  const elapsedMinutes = Math.floor(elapsedSeconds / 60);
+  const elapsedRemainder = elapsedSeconds % 60;
+
+  $("resultSummary").innerHTML = `
+    <div class="result-score">${escapeHTML(score)}</div>
+    <p class="note">Nilai akhir</p>
+
+    <div class="grid">
+      <div class="status-box">
+        <strong>${total}</strong><br>
+        Total soal
+      </div>
+
+      <div class="status-box">
+        <strong>${answered}</strong><br>
+        Soal dijawab
+      </div>
+
+      <div class="feedback good">
+        <strong>${correctCount}</strong><br>
+        Jawaban benar / maksimal
+      </div>
+
+      <div class="feedback bad">
+        <strong>${wrongCount}</strong><br>
+        Perlu pembahasan
+      </div>
+    </div>
+
+    <p class="note">
+      Waktu pengerjaan:
+      ${elapsedMinutes} menit ${elapsedRemainder} detik
+    </p>
+  `;
+}
+
+// =========================================================
+// FILTER PEMBAHASAN
+// =========================================================
+
+document.querySelectorAll(".review-filter").forEach(button => {
+  button.addEventListener("click", () => {
+    activeReviewFilter = button.dataset.reviewFilter;
+
+    updateReviewFilterButtons();
+    renderReviewList();
+  });
+});
+
+function updateReviewFilterButtons() {
+  document.querySelectorAll(".review-filter").forEach(button => {
+    button.classList.toggle(
+      "active",
+      button.dataset.reviewFilter === activeReviewFilter
+    );
+  });
+
+  const titles = {
+    all: "SEMUA JAWABAN",
+    wrong: "JAWABAN SALAH / SKOR TKP BELUM MAKSIMAL",
+    correct: "JAWABAN BENAR / SKOR TKP MAKSIMAL"
+  };
+
+  $("reviewSectionTitle").textContent =
+    titles[activeReviewFilter] || titles.all;
+}
+
+// =========================================================
+// TAMPILKAN DAFTAR JAWABAN
+// =========================================================
+
+function renderReviewList() {
+  let filtered = reviewDetails;
+
+  if (activeReviewFilter === "wrong") {
+    filtered = reviewDetails.filter(item =>
+      item.needsExplanation
+    );
+  }
+
+  if (activeReviewFilter === "correct") {
+    filtered = reviewDetails.filter(item =>
+      !item.needsExplanation && item.selected
+    );
+  }
+
+  if (!filtered.length) {
+    $("reviewList").innerHTML = `
+      <div class="status-box">
+        Tidak ada jawaban pada kategori ini.
+      </div>
+    `;
+    return;
+  }
+
+  $("reviewList").innerHTML = filtered.map(item => {
+    const statusText = !item.selected
+      ? "BELUM DIJAWAB"
+      : item.needsExplanation
+        ? "SALAH / BELUM MAKSIMAL"
+        : "BENAR / SKOR MAKSIMAL";
+
+    const statusClass = item.needsExplanation
+      ? "incorrect"
+      : "correct";
+
+    const selectedText = item.selected
+      ? item.selected
+      : "-";
+
+    const correctText = item.correctAnswer
+      ? item.correctAnswer
+      : "Tidak tersedia";
+
+    const optionHTML = item.options.map(option => {
+      const selected = option.key === item.selected;
+      const correct = option.key === item.correctAnswer;
+
+      let label = "";
+
+      if (selected && correct) {
+        label = " (Jawaban dipilih dan benar)";
+      } else if (selected) {
+        label = " (Jawaban kamu)";
+      } else if (correct) {
+        label = " (Kunci jawaban)";
+      }
+
+      return `
+        <div>
+          <strong>${escapeHTML(option.key)}.</strong>
+          ${escapeHTML(option.text)}
+          ${escapeHTML(label)}
+        </div>
+      `;
+    }).join("");
+
+    let explanationHTML = "";
+
+    if (item.needsExplanation) {
+      explanationHTML = `
+        <div class="explanation-box">
+          <div class="explanation-title">
+            PEMBAHASAN JAWABAN
+          </div>
+
+          ${
+            item.explanation
+              ? escapeHTML(item.explanation)
+              : "Pembahasan belum tersedia. Periksa sheet PENJELASAN " +
+                escapeHTML(item.category) +
+                " dan pastikan nomor pembahasan sesuai dengan nomor soal."
+          }
+        </div>
+      `;
+    }
+
+    let scoreHTML = "";
+
+    if (item.category === "TKP") {
+      scoreHTML = `
+        <p>
+          <strong>Skor pilihan:</strong>
+          ${item.score}
+          ${
+            item.maxScore > 0
+              ? " / " + item.maxScore
+              : ""
+          }
+        </p>
+      `;
+    }
+
+    return `
+      <div class="review-row">
+        <div class="${statusClass}">
+          SOAL NOMOR ${item.number} — ${statusText}
+        </div>
+
+        <p><strong>${escapeHTML(item.question)}</strong></p>
+
+        ${optionHTML}
+
+        <hr style="border:0;border-top:1px solid #e2e8f0;margin:12px 0">
+
+        <p>
+          <strong>Jawaban kamu:</strong>
+          ${escapeHTML(selectedText)}
+        </p>
+
+        <p>
+          <strong>Kunci jawaban:</strong>
+          ${escapeHTML(correctText)}
+        </p>
+
+        ${scoreHTML}
+
+        ${explanationHTML}
+      </div>
+    `;
+  }).join("");
+}
+
+// =========================================================
+// KEMBALI KE MENU UTAMA
+// =========================================================
+
+$("backHomeButton").addEventListener("click", () => {
   clearInterval(timerInterval);
-
-  $("result").classList.add("hidden");
-  $("home").classList.remove("hidden");
 
   questions = [];
   answers = {};
-  flagged = {};
-  checkedPractice = {};
-  currentIndex = 0;
-  submitted = false;
-  gradeData = null;
+  reviewDetails = [];
+  currentQuestion = 0;
+  examFinished = false;
 
-  window.scrollTo(0, 0);
+  showScreen("homeScreen");
 });
 
+// =========================================================
+// INISIALISASI APLIKASI
+// =========================================================
 
-/* =========================================================
-   INISIALISASI
-========================================================= */
+document.addEventListener("DOMContentLoaded", () => {
+  checkConnection();
+});
 
-loadStatus();
+// Jika script berada di akhir body, DOM sudah siap.
+// Jalankan pemeriksaan koneksi langsung.
+checkConnection();
 
 </script>
+
 </body>
 </html>
