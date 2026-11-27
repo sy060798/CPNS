@@ -103,6 +103,19 @@ header{
 .feedback{padding:13px;border-radius:9px;margin-top:15px;font-size:13px;line-height:1.6}
 .feedback.good{background:#dcfce7;color:#166534}
 .feedback.bad{background:#fee2e2;color:#991b1b}
+
+/* Tampilan penjelasan */
+.explanation-box{
+  display:block;margin-top:13px;padding:13px;
+  background:#fff7ed;border-left:4px solid #d97706;
+  border-radius:7px;color:#78350f;font-size:13px;
+  line-height:1.7;white-space:pre-wrap
+}
+.explanation-title{
+  display:block;font-weight:bold;margin-bottom:5px;color:#92400e
+}
+.explanation-text{display:block;white-space:pre-wrap}
+
 footer{text-align:center;color:var(--muted);font-size:12px;padding:25px}
 
 @media(max-width:800px){
@@ -152,19 +165,26 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:25px}
   <h2 class="section-title">Pilih Materi Ujian</h2>
   <div class="category-grid">
     <button class="category active" data-category="TWK">
-      <h2 style="color:#2563eb">TWK</h2><p>Tes Wawasan Kebangsaan</p>
+      <h2 style="color:#2563eb">TWK</h2>
+      <p>Tes Wawasan Kebangsaan</p>
       <div class="count" id="countTWK">Memuat soal...</div>
     </button>
+
     <button class="category" data-category="TIU">
-      <h2 style="color:#16a34a">TIU</h2><p>Tes Intelegensia Umum</p>
+      <h2 style="color:#16a34a">TIU</h2>
+      <p>Tes Intelegensia Umum</p>
       <div class="count" id="countTIU">Memuat soal...</div>
     </button>
+
     <button class="category" data-category="TKP">
-      <h2 style="color:#d97706">TKP</h2><p>Tes Karakteristik Pribadi</p>
+      <h2 style="color:#d97706">TKP</h2>
+      <p>Tes Karakteristik Pribadi</p>
       <div class="count" id="countTKP">Memuat soal...</div>
     </button>
+
     <button class="category" data-category="ALL">
-      <h2 style="color:#7c3aed">GABUNGAN</h2><p>TWK + TIU + TKP</p>
+      <h2 style="color:#7c3aed">GABUNGAN</h2>
+      <p>TWK + TIU + TKP</p>
       <div class="count" id="countALL">Memuat soal...</div>
     </button>
   </div>
@@ -179,6 +199,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:25px}
           <option value="practice">Mode belajar (tanpa timer)</option>
         </select>
       </div>
+
       <div class="field">
         <label>Jumlah soal</label>
         <select id="questionCount">
@@ -189,6 +210,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:25px}
           <option value="110" selected>Semua soal (maksimal 110)</option>
         </select>
       </div>
+
       <div class="field">
         <label>Waktu ujian</label>
         <select id="duration">
@@ -199,6 +221,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:25px}
           <option value="120">120 Menit</option>
         </select>
       </div>
+
       <div class="field">
         <label>Urutan soal</label>
         <select id="order">
@@ -207,9 +230,11 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:25px}
         </select>
       </div>
     </div>
+
     <p class="note">Simulasi gabungan memiliki 30 TWK, 35 TIU, dan 45 TKP jika seluruh soal tersedia. Timer otomatis menggunakan 100 menit untuk 110 soal.</p>
     <button class="btn btn-primary full" id="startBtn">MULAI UJIAN</button>
   </section>
+
   <div id="homeError" class="feedback bad hidden"></div>
 </main>
 
@@ -223,26 +248,34 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:25px}
 
 <section id="exam" class="hidden">
   <div class="exam-header">
-    <div><h3>UJIAN CAT CPNS</h3><small id="examCategory">TWK</small></div>
+    <div>
+      <h3>UJIAN CAT CPNS</h3>
+      <small id="examCategory">TWK</small>
+    </div>
     <div class="timer" id="timer">100:00</div>
   </div>
+
   <div class="exam-layout">
     <div class="question-card">
       <div class="question-meta">
         <span class="tag" id="questionCategory">TWK</span>
         <span id="questionPosition" class="note">Soal 1</span>
       </div>
+
       <div class="progress"><div id="progressBar"></div></div>
       <div class="question-text" id="questionText"></div>
       <div id="options"></div>
       <div id="practiceFeedback" class="hidden"></div>
+
       <div class="exam-actions">
         <button class="btn btn-secondary" id="prevBtn">← Sebelumnya</button>
         <button class="btn btn-secondary" id="flagBtn">⚑ Ragu-ragu</button>
         <button class="btn btn-primary" id="nextBtn">Selanjutnya →</button>
       </div>
+
       <button id="checkBtn" class="btn btn-success full hidden">PERIKSA JAWABAN</button>
     </div>
+
     <aside class="nav-card">
       <h3>Navigasi Soal</h3>
       <div class="legend">
@@ -263,14 +296,30 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:25px}
     <div class="big" id="finalScore">0</div>
     <div id="resultDescription">Nilai akhir</div>
   </div>
+
   <div class="result-grid">
-    <div class="result-item"><span class="note">Jumlah soal</span><strong id="totalResult">0</strong></div>
-    <div class="result-item"><span class="note">Dijawab</span><strong id="answeredResult">0</strong></div>
-    <div class="result-item"><span class="note">Tidak dijawab</span><strong id="emptyResult">0</strong></div>
+    <div class="result-item">
+      <span class="note">Jumlah soal</span>
+      <strong id="totalResult">0</strong>
+    </div>
+    <div class="result-item">
+      <span class="note">Dijawab</span>
+      <strong id="answeredResult">0</strong>
+    </div>
+    <div class="result-item">
+      <span class="note">Tidak dijawab</span>
+      <strong id="emptyResult">0</strong>
+    </div>
   </div>
+
   <h2 class="section-title">Rincian Nilai</h2>
   <div id="categoryResults" class="result-grid"></div>
-  <section class="panel"><h3>Evaluasi Jawaban</h3><div id="reviewList"></div></section>
+
+  <section class="panel">
+    <h3>Evaluasi Jawaban</h3>
+    <div id="reviewList"></div>
+  </section>
+
   <button class="btn btn-primary full" id="retryBtn">KEMBALI KE HALAMAN UTAMA</button>
 </section>
 
@@ -281,12 +330,11 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:25px}
 
 /* =========================================================
    KONFIGURASI API
-   URL INI SUDAH DITES MENGGUNAKAN JSONP
 ========================================================= */
 
 const API_URL = "https://script.google.com/macros/s/AKfycbzrcz_oG4yxJR-QIH_DhIZa7FTkhatKhXptaERh93nDdxdxtgSHttOk_WTjeM0dYjwx/exec";
 
-  const API_TIMEOUT = 45000;
+const API_TIMEOUT = 45000;
 const API_MAX_ATTEMPTS = 3;
 
 let selectedCategory = "TWK";
@@ -335,14 +383,33 @@ function shuffleArray(array) {
 
 
 /* =========================================================
-   JSONP API - DITINGKATKAN UNTUK HP DAN LAPTOP
+   FUNGSI MENAMPILKAN PENJELASAN
+========================================================= */
 
-   Catatan:
-   - Tidak menggunakan fetch/CORS.
-   - Menggunakan script JSONP seperti tesCPNS.
-   - Callback unik untuk setiap permintaan.
-   - Retry otomatis.
-   - Timeout 45 detik.
+function appendExplanation(container, explanation) {
+  const text = String(explanation || "").trim();
+
+  // Tidak membuat kotak jika penjelasan kosong.
+  if (!text) return;
+
+  const box = document.createElement("div");
+  box.className = "explanation-box";
+
+  const title = document.createElement("span");
+  title.className = "explanation-title";
+  title.textContent = "MENGAPA JAWABAN INI SALAH?";
+
+  const content = document.createElement("span");
+  content.className = "explanation-text";
+  content.textContent = text;
+
+  box.append(title, content);
+  container.appendChild(box);
+}
+
+
+/* =========================================================
+   JSONP API - DITINGKATKAN UNTUK HP DAN LAPTOP
 ========================================================= */
 
 function apiRequest(params, maxAttempts = API_MAX_ATTEMPTS) {
@@ -372,7 +439,6 @@ function apiRequest(params, maxAttempts = API_MAX_ATTEMPTS) {
       let finished = false;
       let timeoutId = null;
       let loadCheckId = null;
-      let retryId = null;
 
       function cleanup() {
         if (timeoutId) clearTimeout(timeoutId);
@@ -402,7 +468,8 @@ function apiRequest(params, maxAttempts = API_MAX_ATTEMPTS) {
             "#fbbf24"
           );
 
-          retryId = setTimeout(requestAttempt, 1200 * attempt);
+          setTimeout(requestAttempt, 1200 * attempt);
+
         } else {
           reject(new Error(
             lastError +
@@ -434,10 +501,6 @@ function apiRequest(params, maxAttempts = API_MAX_ATTEMPTS) {
       };
 
       script.onload = function() {
-        /*
-          Callback JSONP biasanya dijalankan saat script dimuat.
-          Beri waktu tambahan untuk browser HP yang lambat.
-        */
         loadCheckId = setTimeout(() => {
           if (!finished) {
             fail("API termuat tetapi tidak mengirim callback JSONP.");
@@ -446,7 +509,6 @@ function apiRequest(params, maxAttempts = API_MAX_ATTEMPTS) {
       };
 
       script.src = API_URL + "?" + query.toString();
-
       document.head.appendChild(script);
     }
 
@@ -546,9 +608,9 @@ async function startExam() {
 
     /*
       Ambil seluruh soal terlebih dahulu.
-      Dengan cara ini pilihan urutan NORMAL benar-benar
-      mengikuti urutan bank soal, bukan subset acak backend.
+      Penjelasan ikut dikirim dari Code.gs.
     */
+
     const data = await apiRequest({
       action: "questions",
       category: selectedCategory,
@@ -574,8 +636,10 @@ async function startExam() {
         if (a.category !== b.category) {
           return categoryOrder[a.category] - categoryOrder[b.category];
         }
+
         return Number(a.number) - Number(b.number);
       });
+
     } else {
       shuffleArray(allQuestions);
     }
@@ -601,6 +665,7 @@ async function startExam() {
       $("timer").textContent = "BELAJAR";
       $("timer").classList.remove("warning");
       clearInterval(timerInterval);
+
     } else {
       if (duration === "auto") {
         timeLeft = Math.max(
@@ -610,6 +675,7 @@ async function startExam() {
       } else {
         timeLeft = Number(duration) * 60;
       }
+
       startTimer();
     }
 
@@ -854,22 +920,38 @@ $("checkBtn").addEventListener("click", async () => {
   }
 });
 
+
+/* =========================================================
+   FEEDBACK MODE BELAJAR
+========================================================= */
+
 function showPracticeFeedback(detail) {
   const box = $("practiceFeedback");
 
+  box.innerHTML = "";
   box.classList.remove("hidden");
   box.className = "feedback " + (detail.correct ? "good" : "bad");
 
+  const message = document.createElement("div");
+
   if (detail.category === "TKP") {
-    box.textContent =
+    message.textContent =
       "Skor jawaban kamu: " + detail.score +
       " dari " + detail.maxScore +
       ". Nilai TKP mengikuti bobot pilihan jawaban.";
+
   } else {
-    box.textContent = detail.correct
+    message.textContent = detail.correct
       ? "BENAR! Jawaban kamu tepat."
       : "BELUM TEPAT. Jawaban yang benar adalah " +
         detail.correctAnswer + ".";
+  }
+
+  box.appendChild(message);
+
+  // Penjelasan hanya ditampilkan untuk jawaban salah.
+  if (!detail.correct && detail.explanation) {
+    appendExplanation(box, detail.explanation);
   }
 }
 
@@ -1062,23 +1144,32 @@ function renderResult(data) {
     const status = document.createElement("div");
 
     if (detail.category === "TKP") {
-      status.className = "correct";
+      status.className = detail.correct ? "correct" : "incorrect";
+
       status.textContent = detail.correct
         ? "Mendapat skor maksimal untuk soal ini"
-        : "Skor TKP sesuai bobot pilihan";
+        : "Skor TKP di bawah skor maksimal";
+
     } else {
       status.className = detail.correct ? "correct" : "incorrect";
+
       status.textContent = detail.correct
         ? "BENAR"
         : "SALAH • Kunci: " + detail.correctAnswer;
     }
 
-    const explanation = document.createElement("small");
-    explanation.className = "note";
-    explanation.textContent =
-      "Pembahasan belum tersedia pada database kunci saat ini.";
+    box.append(heading, text, answer, score, status);
 
-    box.append(heading, text, answer, score, status, explanation);
+    /*
+     * PENTING:
+     * Jika benar, tidak membuat elemen penjelasan.
+     * Jika salah, tampilkan penjelasan dari Google Sheets.
+     */
+
+    if (!detail.correct && detail.explanation) {
+      appendExplanation(box, detail.explanation);
+    }
+
     $("reviewList").appendChild(box);
   });
 
